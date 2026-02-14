@@ -14,7 +14,7 @@ public class BranchController {
 
     private final BranchService branchService;
 
-    @PostMapping
+    @PostMapping("/post")
     public BranchDTO createBranch(@RequestBody BranchDTO dto) {
         return branchService.createBranch(dto);
     }
