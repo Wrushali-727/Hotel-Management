@@ -79,6 +79,7 @@ public class HotelService {
             branch.setRating(branchDTO.getRating());
             branch.setHotel(hotel);
             hotel.getHotelBranches().add(branch);
+
         }
 
 
@@ -90,21 +91,21 @@ public class HotelService {
         return "new hotel created " ;
     }
 
-//    public List<HotelDetailsDTO> getHotels() {
+//    public List<HotelDetailDTO> getHotels() {
 //        List<Hotel> hotels = hotelRepository.findAll();
-//        List<HotelDetailsDTO> hotelDetailsDTO = new ArrayList<>();
+//        List<HotelDetailDTO> hotelDetailsDTO = new ArrayList<>();
 //
 //        for (Hotel hotel : hotels) {
-//            HotelDetailsDTO hotelDetails = new HotelDetailsDTO();
+//            HotelDetailDTO hotelDetails = new HotelDetailDTO();
 //            hotelDetails.setName(hotel.getName());
 //            hotelDetails.setImageUrl(hotel.getImageUrl());
 //            hotelDetails.setRating(hotel.getRating());
 //
-//            hotelDetailsDTO.add(hotelDetails);
+//           hotelDetailsDTO.add(hotelDetails);
 //        }
 //
 //        return hotelDetailsDTO;
-//    }
+//   }
 
 
 
