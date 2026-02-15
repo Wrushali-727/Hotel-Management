@@ -1,82 +1,157 @@
 package com.hotel.hotelmanagement.Service;
 
-import com.hotel.hotelmanagement.DTO.HotelDTO;
 import com.hotel.hotelmanagement.Entity.Hotel;
+import com.hotel.hotelmanagement.Entity.Branch;
+import com.hotel.hotelmanagement.DTO.BranchDTO;
+import com.hotel.hotelmanagement.DTO.HotelDetailDTO;
+import com.hotel.hotelmanagement.Repository.BranchRepository;
 import com.hotel.hotelmanagement.Repository.HotelRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
-@RequiredArgsConstructor
 public class HotelService {
 
-    private final HotelRepository hotelRepository;
+//    @Value("${server.port}")
+//    private String serverPort;
 
-    // CREATE
-    public HotelDTO createHotel(HotelDTO dto) {
+    private final HotelRepository hotelRepository;
+    //  private final HotelBranchRepository hotelBranchRepository;
+
+    public HotelService(HotelRepository hotelRepository /*, HotelBranchRepository hotelBranchRepository */ ) {
+        this.hotelRepository = hotelRepository;
+        //   this.hotelBranchRepository = hotelBranchRepository;
+    }
+
+    public String create (HotelDetailDTO hotelDetailsDTO){
+
+        System.out.println(hotelDetailsDTO); // here we are the mapping the data from dto to entity class
 
         Hotel hotel = new Hotel();
-        hotel.setHotelName(dto.getHotelName());
-        hotel.setCity(dto.getCity());
-        hotel.setAddress(dto.getAddress());
-        hotel.setContactNumber(dto.getContactNumber());
-        hotel.setEmail(dto.getEmail());
+        // hotel.setId(1); no need to use this as now we have already set auto increament(sequence)
+        hotel.setName(hotelDetailsDTO.getName());
+        hotel.setImageUrl(hotelDetailsDTO.getImageUrl());
+        hotel.setRating(hotelDetailsDTO.getRating());
+
 
         Hotel savedHotel = hotelRepository.save(hotel);
 
-        return mapToDTO(savedHotel);
+        // 2 . Save Hotel Branches
+        // this below approach is used when we are using seperate HotelBranchRepositoy
+//        if (hotelDetailsDTO.getBranches() != null) {
+//            for (HotelBranchDTO branchDTO : hotelDetailsDTO.getBranches()) {
+//
+//                HotelBranch branch = new HotelBranch();
+//                branch.setName(branchDTO.getName());
+//                branch.setAddress(branchDTO.getAddress());
+//                branch.setRating(branchDTO.getRating());
+//                branch.setHotel(savedHotel); // FK set here
+//
+//                hotelBranchRepository.save(branch);
+//            }
+//        }
+
+        // instead of above commented part we will do below part i.e. because we are trying to use without repository for Hotel Branch
+
+        // this is a for each loop
+//        for (datatype variable : collection) {
+//            // use variable
+//        }
+
+
+        // here this below code is used for inserting the data into the hotel branch table without using the repository for hotel branch
+        // so here we will enter data into hotel branch entity and then we will set the hotel branch list to the hotel entity and
+        // will automatically save the hotel branch data into the hotel branch table because of the cascade type that we have set in the hotel entity class
+
+        for (BranchDTO branchDTO : hotelDetailsDTO.getBranches()) {
+
+            Branch branch = new Branch();
+
+            branch.setName(branchDTO.getBranchName());           // name → branchName
+            branch.setAddress(branchDTO.getBranchLocation());
+            branch.setRating(branchDTO.getRating());
+            branch.setHotel(hotel);
+            hotel.getHotelBranches().add(branch);
+        }
+
+
+
+
+
+
+
+        return "new hotel created " ;
     }
 
-    // GET ALL
-    public List<HotelDTO> getAllHotels() {
-        return hotelRepository.findAll()
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
-    }
+//    public List<HotelDetailsDTO> getHotels() {
+//        List<Hotel> hotels = hotelRepository.findAll();
+//        List<HotelDetailsDTO> hotelDetailsDTO = new ArrayList<>();
+//
+//        for (Hotel hotel : hotels) {
+//            HotelDetailsDTO hotelDetails = new HotelDetailsDTO();
+//            hotelDetails.setName(hotel.getName());
+//            hotelDetails.setImageUrl(hotel.getImageUrl());
+//            hotelDetails.setRating(hotel.getRating());
+//
+//            hotelDetailsDTO.add(hotelDetails);
+//        }
+//
+//        return hotelDetailsDTO;
+//    }
 
-    // GET BY ID
-    public HotelDTO getHotelById(Long id) {
 
-        Hotel hotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
 
-        return mapToDTO(hotel);
-    }
 
-    // UPDATE
-    public HotelDTO updateHotel(Long id, HotelDTO dto) {
 
-        Hotel hotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+    // public List<HotelDetailsDTO> getHotels() {
 
-        hotel.setHotelName(dto.getHotelName());
-        hotel.setCity(dto.getCity());
-        hotel.setAddress(dto.getAddress());
-        hotel.setContactNumber(dto.getContactNumber());
-        hotel.setEmail(dto.getEmail());
+    //     List<Hotel> hotels = hotelRepository.findAll();
+    //     List<HotelDetailsDTO> response = new ArrayList<>();
 
-        Hotel updatedHotel = hotelRepository.save(hotel);
+    //     for (Hotel hotel : hotels) {
 
-        return mapToDTO(updatedHotel);
-    }
+    //         // 1️⃣ Hotel DTO
+    //         HotelDetailsDTO hotelDTO = new HotelDetailsDTO();
+    //         hotelDTO.setName(hotel.getName());
+    //         hotelDTO.setImageUrl(hotel.getImageUrl());
+    //         hotelDTO.setRating(hotel.getRating());
 
-    // DELETE
-    public void deleteHotel(Long id) {
-        hotelRepository.deleteById(id);
-    }
+    // 2️⃣ Fetch branches for this hotel
+//            List<HotelBranch> branches =
+//                  hotelBranchRepository.findByHotelId(hotel.getId());
+//
+//            List<HotelBranchDTO> branchDTOs = new ArrayList<>();
+//
+//            for (HotelBranch branch : branches) {
+//                HotelBranchDTO branchDTO = new HotelBranchDTO();
+//                branchDTO.setName(branch.getName());
+//                branchDTO.setAddress(branch.getAddress());
+//                branchDTO.setRating(branch.getRating());
+//
+//                branchDTOs.add(branchDTO);
+//            }
 
-    // Convert Entity → DTO
-    private HotelDTO mapToDTO(Hotel hotel) {
-        return new HotelDTO(
-                hotel.getHotelId(),
-                hotel.getHotelName(),
-                hotel.getCity(),
-                hotel.getAddress(),
-                hotel.getContactNumber(),
-                hotel.getEmail()
-        );
-    }
+    // 3️  Attach branches to hotel
+//            hotelDTO.setBranches(branchDTOs);
+
+    //         response.add(hotelDTO);
+    //     }
+
+    //     return response;
+    // }
+
+
+
+
+
+
+
+
 }

@@ -1,11 +1,8 @@
 package com.hotel.hotelmanagement.DTO;
 
-import lombok.*;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class BranchDTO {
 
     private Long branchId;
@@ -13,5 +10,6 @@ public class BranchDTO {
     private String branchLocation;
     private String contactNumber;
     private Long hotelId;
+    private Integer rating;
 }
 

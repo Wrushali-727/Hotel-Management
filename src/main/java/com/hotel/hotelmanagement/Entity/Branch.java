@@ -1,25 +1,34 @@
 package com.hotel.hotelmanagement.Entity;
 
+
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
+@Data
 @Entity
-@Table(name = "branches")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name="hotel_branch")
 public class Branch {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long branchId;
+    @Column(name = "id")
+    @SequenceGenerator(name="hotel_branch_seq_id", sequenceName= "seq_hotel_branch_id", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "hotel_branch_seq_id" )
+    private Integer id;
 
-    private String branchName;
-    private String branchLocation;
-    private String contactNumber;
+    @Column(name = "name")
+    private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "hotel_id", nullable = false)
-    private Hotel hotel;
+    @Column(name="rating")
+    private Integer rating ;
+
+    @Column(name = "address")
+    private String address;
+
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hotel_id", referencedColumnName="id")
+    private Hotel hotel ;
+
+
 }
+

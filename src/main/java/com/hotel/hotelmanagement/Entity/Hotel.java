@@ -1,29 +1,32 @@
 package com.hotel.hotelmanagement.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Entity
-@Table(name = "hotels")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name="hotel")
 public class Hotel {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long hotelId;
+    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name="hotel_id_seq", sequenceName= "seq_hotel_id", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "hotel_id_seq" )
+    @Column (name = "id")
+    private Integer id;
 
-    private String hotelName;
-    private String city;
-    private String address;
-    private String contactNumber;
-    private String email;
+    @Column(name = "name")
+    private String name;
 
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
-    private List<Branch> branches;
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "rating")
+    private Integer rating;
+
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true) // here orphanRemoval = true is used to remove the branches when we delete the hotel
+    private List<Branch> hotelBranches = new ArrayList<>();                                      // here cascade = CascadeType.ALL is used to save the branches when we save the hotel and also to delete the branches when we delete the hotel
 }
-
