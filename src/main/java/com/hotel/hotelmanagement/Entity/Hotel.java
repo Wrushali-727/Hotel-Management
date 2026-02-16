@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name="hotel")
 public class Hotel {
     @Id
-    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @SequenceGenerator(name="hotel_id_seq", sequenceName= "seq_hotel_id", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "hotel_id_seq" )
     @Column (name = "id")

@@ -19,23 +19,21 @@ import java.util.List;
 @Service
 public class HotelService {
 
-//    @Value("${server.port}")
-//    private String serverPort;
 
     private final HotelRepository hotelRepository;
-    //  private final HotelBranchRepository BranchRepository;
+
 
     public HotelService(HotelRepository hotelRepository /*, HotelBranchRepository BranchRepository */ ) {
         this.hotelRepository = hotelRepository;
-        //   this.hotelBranchRepository = hotelBranchRepository;
+
     }
 
     public String create (HotelDetailDTO hotelDetailsDTO){
 
-        System.out.println(hotelDetailsDTO); // here we are the mapping the data from dto to entity class
+        System.out.println(hotelDetailsDTO);
 
         Hotel hotel = new Hotel();
-        // hotel.setId(1); no need to use this as now we have already set auto increament(sequence)
+
         hotel.setName(hotelDetailsDTO.getName());
         hotel.setImageUrl(hotelDetailsDTO.getImageUrl());
         hotel.setRating(hotelDetailsDTO.getRating());
