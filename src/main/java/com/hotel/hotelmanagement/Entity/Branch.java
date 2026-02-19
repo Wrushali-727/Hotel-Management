@@ -1,34 +1,32 @@
 package com.hotel.hotelmanagement.Entity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Data
 @Entity
-@Table(name="hotel_branch")
+@Table(name = "hotel_branch")
 public class Branch {
+
     @Id
-    @Column(name = "id")
-    @SequenceGenerator(name="hotel_branch_seq_id", sequenceName= "seq_hotel_branch_id", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "hotel_branch_seq_id" )
+    @SequenceGenerator(
+            name = "hotel_branch_seq_id",
+            sequenceName = "seq_hotel_branch_id",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "hotel_branch_seq_id"
+    )
     private Integer id;
 
-    @Column(name = "name")
     private String name;
-
-    @Column(name="rating")
-    private Integer rating ;
-
-    @Column(name = "address")
     private String address;
+    private Integer rating;
 
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_id", referencedColumnName="id")
-    private Hotel hotel ;
-
-
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    @JsonBackReference
+    private Hotel hotel;
 }
-

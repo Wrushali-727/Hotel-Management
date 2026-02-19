@@ -1,24 +1,43 @@
 package com.hotel.hotelmanagement.Controller;
 
-import com.hotel.hotelmanagement.DTO.HotelDetailDTO;
-import com.hotel.hotelmanagement.Service.HotelService;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
+import com.hotel.hotelmanagement.Service.HotelService;
+import com.hotel.hotelmanagement.DTO.HotelDetailDTO;
+import com.hotel.hotelmanagement.Entity.Hotel;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/hotel")
+@RequiredArgsConstructor
 public class HotelController {
 
     private final HotelService hotelService;
 
-    public HotelController(HotelService hotelService){
-        this.hotelService = hotelService;
+    // CREATE HOTEL
+    @PostMapping("/create")
+    public ResponseEntity<String> create(@RequestBody HotelDetailDTO dto) {
+        return ResponseEntity.ok(hotelService.create(dto));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody HotelDetailDTO hotelDetailsDTO ){
-        String response = hotelService.create(hotelDetailsDTO);
-        return ResponseEntity.ok(response);
+    //GET ALL HOTELS
+    @GetMapping("/all")
+    public ResponseEntity<List<Hotel>> getAllHotels() {
+        return ResponseEntity.ok(hotelService.getAllHotels());
+    }
+
+    //GET HOTEL BY ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Hotel> getHotel(@PathVariable Integer id) {
+        return ResponseEntity.ok(hotelService.getHotelById(id));
+    }
+
+    //GET HOTEL BY RATING
+    @GetMapping("/rating/{rating}")
+    public ResponseEntity<List<Hotel>> getHotelByRating(@PathVariable Integer rating) {
+        return ResponseEntity.ok(hotelService.getHotelByRating(rating));
     }
 }
-
