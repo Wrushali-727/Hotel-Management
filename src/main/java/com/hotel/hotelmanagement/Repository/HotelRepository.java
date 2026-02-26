@@ -1,11 +1,9 @@
 package com.hotel.hotelmanagement.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
 import com.hotel.hotelmanagement.Entity.Hotel;
+import java.util.List;
 
-public interface HotelRepository extends JpaRepository<Hotel, Integer> {
-
+public interface HotelRepository extends JpaRepository<Hotel, Long> {
     List<Hotel> findByRating(Integer rating);
-
 }

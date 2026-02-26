@@ -5,11 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RegisterRequestDTO {
+public class UserDTO {
 
     private String fullName;
     private String email;
     private String password;
-
-    private String role;   // ADD THIS LINE
+    private String role;   // optional (ADMIN or CUSTOMER)
 }

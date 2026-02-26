@@ -3,11 +3,10 @@ package com.hotel.hotelmanagement.Service;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.hotel.hotelmanagement.Repository.UserRepository;
-import com.hotel.hotelmanagement.Repository.RoleRepository;
-import com.hotel.hotelmanagement.DTO.RegisterRequestDTO;
-import com.hotel.hotelmanagement.Entity.User;
-import com.hotel.hotelmanagement.Entity.Role;
+
+import com.hotel.hotelmanagement.Repository.*;
+import com.hotel.hotelmanagement.DTO.*;
+import com.hotel.hotelmanagement.Entity.*;
 
 @Service
 @RequiredArgsConstructor
@@ -16,26 +15,34 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    // AUTO CREATE ROLES WHEN STARTS
     @PostConstruct
     public void initRoles() {
-        if (roleRepository.findByName("USER").isEmpty()) {
-            Role userRole = new Role();
-            userRole.setName("USER");
-            roleRepository.save(userRole);
+
+        if (roleRepository.findByName("CUSTOMER").isEmpty()) {
+            Role customer = new Role();
+            customer.setName("CUSTOMER");
+            roleRepository.save(customer);
         }
 
         if (roleRepository.findByName("ADMIN").isEmpty()) {
-            Role adminRole = new Role();
-            adminRole.setName("ADMIN");
-            roleRepository.save(adminRole);
+            Role admin = new Role();
+            admin.setName("ADMIN");
+            roleRepository.save(admin);
         }
     }
 
-    // REGISTER
+    // ✅ FIXED METHOD
     public String register(RegisterRequestDTO dto) {
 
-        Role role = roleRepository.findByName("USER")
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        String roleName = (dto.getRole() == null || dto.getRole().isBlank())
+                ? "CUSTOMER"
+                : dto.getRole().toUpperCase();
+
+        Role role = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
         User user = new User();
@@ -46,35 +53,23 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return "User Registered Successfully";
+        return roleName + " registered successfully";
     }
 
-    // GET USER
-    public RegisterRequestDTO getUser(Long id) {
+    public LoginResponseDTO login(LoginRequestDTO dto) {
 
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-        RegisterRequestDTO dto = new RegisterRequestDTO();
-        dto.setFullName(user.getFullName());
-        dto.setEmail(user.getEmail());
-        dto.setPassword(user.getPassword());
+        if (!user.getPassword().equals(dto.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
 
-        return dto;
-    }
-
-    // UPDATE USER
-    public String updateUser(Long id, RegisterRequestDTO dto) {
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setFullName(dto.getFullName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
-
-        userRepository.save(user);
-
-        return "User updated successfully";
+        return new LoginResponseDTO(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().getName(),
+                "mock-jwt-token");
     }
 }

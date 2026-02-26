@@ -14,9 +14,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "full_name")
     private String fullName;
+
+    @Column(unique = true, nullable = false)
     private String email;
-    private String password;
+
+    @Column(nullable = false)
+    private String password; // Encrypted
 
     @ManyToOne
     @JoinColumn(name = "role_id")
